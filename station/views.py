@@ -4,6 +4,15 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import View
+from django.shortcuts import render
+
+
+
+from .models import Station
+
+from .forms import StationForm
 
 # Create your views here.
 @login_required(login_url="/signin")
@@ -119,3 +128,20 @@ def signupStation(request):
 @login_required(login_url="/signinStation")
 def homeStation(request):
     return render(request, 'homeStation.html')
+
+class StationCreate(LoginRequiredMixin ,View):
+    def get(self, request):
+        form = StationForm()
+        return render(request, "station_form.html", {"form": form})
+
+    def post(self, request):
+        form = StationForm(data=request.POST)
+        
+        if form.is_valid():
+            form.instance.user = request.user
+            form.save()
+            return redirect("homeStation")
+
+        return render(request,"station_form.html", {"form": form})
+    
+   

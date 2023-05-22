@@ -1,0 +1,16 @@
+{%extends 'base.html'%}
+
+{%block nav%}
+
+<div class="bg-light p-5 rounded">
+    <h2>Ajouter un nouveau station</h2>
+    {% comment %} {% crispy form %} {% endcomment %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" >Enregistrer</button>
+        <a href="{% url 'station_form' %}"  >Annuler</a>
+    </form>
+</div>
+{%endblock%}

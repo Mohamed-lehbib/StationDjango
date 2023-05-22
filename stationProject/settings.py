@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'django_browser_reload',
+    'station',
+    
 ]
 
 MIDDLEWARE = [
@@ -134,3 +136,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TAILWIND_APP_NAME = 'theme'
+
