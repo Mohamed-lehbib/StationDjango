@@ -7,4 +7,4 @@ from .models import (
 class StationForm(forms.ModelForm):
     class Meta:
         model = Station
-        fields = ["nom", "telephone"]
+        fields = ["nom", "telephone", "localisation", "email", "typeCarburant", "modePaiyement"]
