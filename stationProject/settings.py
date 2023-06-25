@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'stationProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'peasy',
+        'NAME': 'hello',
         'USER': 'postgres',
         'PASSWORD': 'R14707',
         'HOST': '127.0.0.1',
@@ -147,4 +147,6 @@ STATIC_URL = '/static/'
 TAILWIND_APP_NAME = 'theme'
 
 X_FRAME_OPTIONS = 'ALLOWALL'
+
+
 

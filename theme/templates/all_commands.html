@@ -1,0 +1,34 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+
+    <h1>All Commands</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Command ID</th>
+                <th>User</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for command in commands %}
+                <tr>
+                    <td>{{ command.id }}</td>
+                    <td>{{ command.nom }}</td>
+                    <td>{{ command.items }}</td>
+                    <td>{{ command.total }}</td>
+                    <td>{{ command.date_commande }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No commands found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

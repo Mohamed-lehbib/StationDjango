@@ -15,8 +15,20 @@ from geopy.geocoders import Nominatim
 from django.templatetags.static import static
 from django.utils.text import slugify
 from django.urls import reverse
+from django.shortcuts import redirect, render
+from .models import Product, Commande, Category
+from django.core.paginator import Paginator
+from django.core.files.storage import default_storage
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
+from django.conf import settings
 
+from folium.features import CustomIcon
 
 # Create your views here.
 @login_required(login_url="/signin")
@@ -185,13 +197,26 @@ def index(request):
 
 
 
-        folium.Marker([station.latitude, station.longitude], tooltip=station.nom,
-            popup=f'<a href="{station_url}">{station.nom}</a>'
-        ).add_to(m)
-
+        folium.Marker(
+        location=[station.latitude, station.longitude],
+        tooltip=station.nom,
+        popup=f'<a href="{station_url}">{station.nom}</a>',
+        icon=folium.Icon(icon_color='white', icon='gas-pump', prefix='fa', color='red')  # Utilisation d'une icône de feuille verte
+    ).add_to(m)
 
     # Obtenir la localisation de l'utilisateur connecté
-  
+    location = geocoder.ip('me')
+    user_lat = None
+    user_lng = None
+
+    if location is not None:
+       user_lat = location.lat
+       user_lng = location.lng
+
+    if user_lat is not None and user_lng is not None:
+       folium.Marker([user_lat, user_lng], tooltip='your location').add_to(m)
+   
+
    
    
     m = m._repr_html_()
@@ -222,3 +247,154 @@ def station_detail(request, slug):
         'station': station
     }
     return render(request, 'station_detail.html',  context)
+
+
+
+
+
+
+@login_required
+def add_product(request):
+    categories = Category.objects.all()
+
+    if request.method == 'POST':
+        # Retrieve other form data
+        product_name = request.POST.get('product-name')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        product_category_id = int(request.POST.get('product-category'))
+
+        # Get the uploaded image file
+        product_image = request.FILES.get('product-image')
+
+        # Get the category object based on the category ID
+        product_category = Category.objects.get(id=product_category_id)
+
+        # Create a new Product object
+        product = Product(
+            title=product_name,
+            price=price,
+            description=description,
+            category=product_category,
+            image=product_image,  # Assign the image directly
+        )
+
+        # Save the product object to the database
+        product.save()
+
+        return redirect('index')
+
+    return render(request, 'addProduct.html', {'categories': categories})
+
+
+# Create your views here.
+def dex(request):
+
+    product_object = Product.objects.all()
+
+    item_name = request.GET.get('item-name')
+    if item_name and item_name != '':
+        product_object = product_object.filter(title__icontains=item_name)
+
+    paginator = Paginator(product_object, 4)
+    page = request.GET.get('page')
+    product_object = paginator.get_page(page)
+    return render(request, 'dex.html', {'product_object': product_object})
+
+def detail(request, myid):
+    product_object = Product.objects.get(id=myid)
+    return render(request, 'detail.html', {'product': product_object}) 
+
+def checkout(request):
+    if request.method == "POST":
+        items = request.POST.get('items')
+        total = request.POST.get('total')
+        nom = request.POST.get('nom')
+        email = request.POST.get('email')
+        address = request.POST.get('address')
+        ville = request.POST.get('ville')
+        pays = request.POST.get('pays')
+        zipcode= request.POST.get('zipcode')
+        com = Commande(items=items,total=total, nom=nom, email=email, address=address, ville=ville, pays=pays, zipcode=zipcode)
+        com.save()
+        return redirect('confirmation')
+
+
+    return render(request, 'checkout.html') 
+
+def confirmation(request):
+    info = Commande.objects.all()[:1]
+    for item in info:
+        nom = item.nom
+    return render(request, 'confirmation.html', {'name': nom})
+      
+
+
+
+
+
+def add_product(request):
+    categories = Category.objects.all()
+
+    if request.method == 'POST':
+        # Retrieve form data
+        product_name = request.POST.get('product-name')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        quantity = int(request.POST.get('quantity', 1))  # Default to 1 if quantity is not provided
+        product_category_id = int(request.POST.get('product-category'))
+
+        # Get the uploaded image file
+        product_image = request.FILES.get('product-image')
+
+        # Save the image file to the images directory
+        image_path = default_storage.save('images/' + product_image.name, product_image)
+
+        # Get the category object based on the category ID
+        product_category = Category.objects.get(id=product_category_id)
+
+        # Create a new Product object and save it to the database
+        product = Product(
+            title=product_name,
+            price=price,
+            description=description,
+            category=product_category,
+            image=image_path,
+            user=request.user,  # Set the user foreign key
+            quantity=quantity  # Set the quantity
+        )
+        product.save()
+
+        return redirect('home')
+
+    return render(request, 'addProduct.html', {'categories': categories})
+
+
+def all_commands(request):
+    commands = Commande.objects.all().order_by('-date_commande')
+    return render(request, 'shop/all_commands.html', {'commands': commands})
+
+def ajouter_panier(request, product_id):
+    # Retrieve the product object
+    product = Product.objects.get(pk=product_id)
+
+    # Get the current user's shopping cart from the session
+    panier = request.session.get('panier', {})
+
+    # Check if the product already exists in the cart
+    if product_id in panier:
+        # Increment the quantity and update the total price
+        panier[product_id]['quantity'] += 1
+        panier[product_id]['total_price'] += product.price
+    else:
+        # Add the product to the cart
+        panier[product_id] = {
+            'title': product.title,
+            'quantity': 1,
+            'total_price': product.price
+        }
+
+    # Update the cart in the session
+    request.session['panier'] = panier
+
+    return redirect('product_list')
