@@ -20,7 +20,7 @@ urlpatterns = [
 from django.urls import path, include
 from . import views
 
-
+from station.views import *
 from .views import StationCreate 
 
 urlpatterns = [
@@ -33,5 +33,6 @@ urlpatterns = [
     path('signupStation', views.signupStation, name="signupStation"),
     path('homeStation', views.homeStation, name="homeStation"),  
     path('station/ajouter', StationCreate.as_view(), name="station_create"),
-    
+    path('index', views.index, name='index'),
+    path('station/<slug:slug>/', views.station_detail, name='station-detail'),
 ]

@@ -1,10 +1,13 @@
 {%extends 'base.html'%}
 
-{%block nav%}
 
-<div class="bg-light p-5 rounded">
+{%block content%}
+<div class="bg-light p-5 rounded" align="center">
+
     <h2>Ajouter un nouveau station</h2>
+</div>
     {% comment %} {% crispy form %} {% endcomment %}
+    <div class="bg-light p-5 rounded" align="center">
     <form action="" method="post">
         {% csrf_token %}
         {{ form.as_p }}
@@ -14,3 +17,4 @@
     </form>
 </div>
 {%endblock%}
+

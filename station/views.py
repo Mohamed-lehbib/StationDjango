@@ -5,10 +5,17 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.views import View
-
+import folium
+import geocoder
 from .forms import StationForm
 from .models import Station
+from geopy.geocoders import Nominatim
+from django.templatetags.static import static
+from django.utils.text import slugify
+from django.urls import reverse
+
 
 
 # Create your views here.
@@ -147,6 +154,71 @@ class StationCreate(LoginRequiredMixin, View):
         if form.is_valid():
             form.instance.user = request.user
             form.save()
-            return redirect("homeStation")
+            return redirect("index")
 
         return render(request, "station_form.html", {"form": form})
+
+
+
+def index(request):
+    if request.method == 'POST':
+        form = StationForm(request.POST)
+        if form.is_valid():
+            station = form.save(commit=False)
+            station.user = request.user
+            station.save()
+            return redirect('/')
+    else:
+        form = StationForm()
+
+    stations = Station.objects.all()
+
+    # Créer une carte avec des marqueurs pour les stations existantes
+    m = folium.Map(location=[20, -10], zoom_start=6)
+    for station in stations:
+        
+        
+        
+        
+        # Generate the URL for the station's detail page
+        station_url = reverse('station-detail', args=[station.slug])
+
+
+
+        folium.Marker([station.latitude, station.longitude], tooltip=station.nom,
+            popup=f'<a href="{station_url}">{station.nom}</a>'
+        ).add_to(m)
+
+
+    # Obtenir la localisation de l'utilisateur connecté
+  
+   
+   
+    m = m._repr_html_()
+
+    context = {
+        'form': form,
+        'm': m
+    }
+    return render(request, 'index.html', context)
+    
+
+
+def get_default_location():
+    location = geocoder.ip('me')
+    if location is not None:
+        return str(location)
+    return ""
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import Station
+
+
+
+def station_detail(request, slug):
+    station = get_object_or_404(Station, slug=slug)
+    context = {
+        'station': station
+    }
+    return render(request, 'station_detail.html',  context)

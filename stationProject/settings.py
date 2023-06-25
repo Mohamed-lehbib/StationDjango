@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'theme',
     'django_browser_reload',
     'station',
+    'autoslug',
     
 ]
 
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django_browser_reload.middleware.BrowserReloadMiddleware",
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'stationProject.urls'
@@ -60,7 +62,7 @@ ROOT_URLCONF = 'stationProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,12 +83,12 @@ WSGI_APPLICATION = 'stationProject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'station-django',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'peasy',
         'USER': 'postgres',
-        'PASSWORD': '',
+        'PASSWORD': 'R14707',
         'HOST': '127.0.0.1',
-        'PORT': '5432'
+        'PORT': '5433'
     }
 }
 
@@ -143,4 +145,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 TAILWIND_APP_NAME = 'theme'
+
+X_FRAME_OPTIONS = 'ALLOWALL'
 
