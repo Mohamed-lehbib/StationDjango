@@ -1,10 +1,57 @@
-<h1>{{ station.nom }}</h1>
-<p><strong>Localisation:</strong> {{ station.localisation }}</p>
-<p><strong>NNI:</strong> {{ station.nni }}</p>
-<p><strong>Email:</strong> {{ station.email }}</p>
-<p><strong>Téléphone:</strong> {{ station.telephone }}</p>
-<p><strong>Status:</strong> {{ station.get_status_display }}</p>
-<p><strong>Type de carburant:</strong> {{ station.typeCarburant }}</p>
-<p><strong>Mode de paiement:</strong> {{ station.modePaiyement }}</p>
-<p><strong>Latitude:</strong> {{ station.latitude }}</p>
-<p><strong>Longitude:</strong> {{ station.longitude }}</p>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h1 class="text-center">{{ station.nom }}</h1>
+        </div>
+        <div class="card-body">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>Localisation</th>
+                <td>{{ station.localisation }}</td>
+              </tr>
+              <tr>
+                <th>NNI</th>
+                <td>{{ station.nni }}</td>
+              </tr>
+              <tr>
+                <th>Email</th>
+                <td>{{ station.email }}</td>
+              </tr>
+              <tr>
+                <th>Téléphone</th>
+                <td>{{ station.telephone }}</td>
+              </tr>
+              <tr>
+                <th>Status</th>
+                <td>{{ station.get_status_display }}</td>
+              </tr>
+              <tr>
+                <th>Type de carburant</th>
+                <td>{{ station.typeCarburant }}</td>
+              </tr>
+              <tr>
+                <th>Mode de paiement</th>
+                <td>{{ station.modePaiyement }}</td>
+              </tr>
+              <tr>
+                <th>Latitude</th>
+                <td>{{ station.latitude }}</td>
+              </tr>
+              <tr>
+                <th>Longitude</th>
+                <td>{{ station.longitude }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,20 +1,18 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
 
+{% block content %}
+<div class="container">
+    <div class="bg-light p-5 rounded text-center">
+        <h2>Ajouter une nouvelle station</h2>
+    </div>
+    <div class="bg-light p-5 rounded text-center">
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-{%block content%}
-<div class="bg-light p-5 rounded" align="center">
-
-    <h2>Ajouter un nouveau station</h2>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+            <a href="{% url 'homeStation' %}" class="btn btn-secondary">Annuler</a>
+        </form>
+    </div>
 </div>
-    {% comment %} {% crispy form %} {% endcomment %}
-    <div class="bg-light p-5 rounded" align="center">
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-
-        <button type="submit" >Enregistrer</button>
-        <a href="{% url 'homeStation' %}"  >Annuler</a>
-    </form>
-</div>
-{%endblock%}
-
+{% endblock %}

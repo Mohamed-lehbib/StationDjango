@@ -1,37 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Add Product</h2>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div>
-            <label for="product-name">Product Name:</label>
-            <input type="text" id="product-name" name="product-name" required>
-        </div>
-        <div>
-            <label for="price">Price:</label>
-            <input type="number" id="price" name="price" required>
-        </div>
-        <div>
-            <label for="description">Description:</label>
-            <input type="text" id="description" name="description" required>
-        </div>
-        <div>
-            <label for="product-category">Product Category:</label>
-            <select id="product-category" name="product-category" required>
-                {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div>
-            <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" value="1" required>
-        </div>
-        <div>
-            <label for="product-image">Product Image:</label>
-            <input type="file" id="product-image" name="product-image" accept="image/*" required>
-        </div>
-        <button type="submit">Add Product</button>
-    </form>
+    <div class="container">
+        <h2 class="text-center">Add Product</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="product-name">Product Name:</label>
+                <input type="text" class="form-control" id="product-name" name="product-name" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price:</label>
+                <input type="number" class="form-control" id="price" name="price" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea class="form-control" id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="product-category">Product Category:</label>
+                <select class="form-control" id="product-category" name="product-category" required>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="1" required>
+            </div>
+            <div class="form-group">
+                <label for="product-image">Product Image:</label>
+                <input type="file" class="form-control-file" id="product-image" name="product-image" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </form>
+    </div>
 {% endblock %}
